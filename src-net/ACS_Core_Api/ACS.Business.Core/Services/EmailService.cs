@@ -58,32 +58,87 @@ namespace ACS.Business.Core.Services
 
         public async Task<ResponseStatus> SendMultipleEmailsAsync(Email_Acs email_Acs)
         {
+         
             try
             {
                 var auth = await authentication.EmailAuthentication();
-
                 // Create the email content
-                var emailContent = new EmailContent(email_Acs.Subject);
-                emailContent.Html= email_Acs.HtmlContent;
+                var emailContent = new EmailContent(email_Acs.Subject)
+                {
+                    PlainText = email_Acs.PlainContent,
+                    Html = $"<html><body><h1>{email_Acs.HtmlContent}.</h1><p>This mail was sent using .NET SDK!!</p></body></html>"
+                };
 
-                // Create the to list
-                var toRecipients = email_Acs.MultiRecipient;
-                var emailRecipients = new EmailRecipients(toRecipients);
-                var emailMessage = new EmailMessage
-                    (
-                   
-                        email_Acs.Sender,
-                        emailContent,
-                         email_Acs.MultiRecipient
-                        
-                       
-                    );
-               
-                response.Status = true;
-                response.Message = "Sms Sent Successfully.";
-                return response;
+                // Create the To list
+                var toRecipients = new List<EmailAddress>
+                {                   
+                  //new EmailAddress("<emailalias1@emaildomain.com>"),
+                  //new EmailAddress("<emailalias2@emaildomain.com>"),
+                };
+                foreach (var newEmail in email_Acs.MultiRecipient)
+                {
+                    toRecipients = new List<EmailAddress>
+                    {
+                        new EmailAddress(newEmail)
+                    };
+
+                }
+
+                // Create the CC list
+                var ccRecipients = new List<EmailAddress>
+                {
+                  new EmailAddress("<ccemailalias@emaildomain.com>"),
+                };
+
+                foreach (var newEmail in email_Acs.CcRecipient)
+                {
+                    ccRecipients = new List<EmailAddress>
+                    {
+                        new EmailAddress(newEmail)
+                    };
+                }
+
+                // Create the BCC list
+                var bccRecipients = new List<EmailAddress>
+                {
+                  new EmailAddress("<bccemailalias@emaildomain.com>"),
+                };
+
+                foreach (var newEmail in email_Acs.BccRecipient)
+                {
+                    bccRecipients = new List<EmailAddress>
+                    {
+                        new EmailAddress(newEmail)
+                    };
+                }
+                EmailRecipients emailRecipients = new EmailRecipients(toRecipients, ccRecipients, bccRecipients);
+
+                // Create the EmailMessage
+                var emailMessage = new EmailMessage(
+                    senderAddress: "donotreply@xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.azurecomm.net" ,// The email address of the domain registered with the Communication Services resource
+
+                    emailRecipients,
+                    emailContent);
+
+                // Add optional ReplyTo address which is where any replies to the email will go to.
+                emailMessage.ReplyTo.Add(new EmailAddress("<replytoemailalias@emaildomain.com>"));
+
+                try
+                {
+                    EmailSendOperation emailSendOperation = auth.Send(WaitUntil.Completed, emailMessage);
+                    Console.WriteLine($"Email Sent. Status = {emailSendOperation.Value.Status}");
+
+                    /// Get the OperationId so that it can be used for tracking the message for troubleshooting
+                    string operationId = emailSendOperation.Id;
+                    Console.WriteLine($"Email operation id = {operationId}");
+                }
+                catch (RequestFailedException ex)
+                {
+                    /// OperationID is contained in the exception message and can be used for troubleshooting purposes
+                    Console.WriteLine($"Email send operation failed with error code: {ex.ErrorCode}, message: {ex.Message}");
+                }
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
 
             }

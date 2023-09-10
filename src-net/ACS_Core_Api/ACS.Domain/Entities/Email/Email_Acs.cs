@@ -10,10 +10,13 @@ namespace ACS.Domain.Entities.Email
 {
     public class Email_Acs
     {
-        public EmailContent Subject { get; set; }
-        public EmailContent HtmlContent { get; set; }
+        public string Subject { get; set; }
+        public string PlainContent { get; set; }
+        public string HtmlContent { get; set; }
         public string Sender { get; set; }
-        public IEnumerable<EmailAddress> MultiRecipient { get; set; }
-        public EmailAddress Recipient { get; set; }
+        public IEnumerable<string> MultiRecipient { get; set; }
+        public IEnumerable<string> CcRecipient { get; set; }
+        public IEnumerable<string> BccRecipient { get; set; }
+        public string Recipient { get; set; }
     }
 }
