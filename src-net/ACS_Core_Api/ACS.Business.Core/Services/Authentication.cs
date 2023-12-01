@@ -1,10 +1,17 @@
-﻿using Azure.Communication.Email;
+﻿using ACS.Domain.Entities.Chat;
+using Azure;
+using Azure.Communication;
+using Azure.Communication.Chat;
+using Azure.Communication.Email;
+using Azure.Communication.Identity;
 using Azure.Communication.Sms;
+using Azure.Core;
 using Azure.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ACS.Business.Core.Services
@@ -48,6 +55,27 @@ namespace ACS.Business.Core.Services
             }
             return result;
         }
+
+
+        //public async Task ListChatsThreads(ChatThreadClient)
+        //{
+        //    try
+        //    {
+        //        var chatClient = ChatAuthenticate();
+        //        AsyncPageable<ChatThreadItem> chatThreadItems = chatClient.Result.GetChatThreadsAsync();
+        //        await foreach (ChatThreadItem chatThreadItem in chatThreadItems)
+        //        {
+        //            Console.WriteLine($"{chatThreadItem.Id}");
+        //        }
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        throw new Exception(ex.Message);
+        //    }
+        //}
+
+
+
 
     }
 }
