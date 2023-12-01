@@ -8,6 +8,6 @@ namespace ACS.Business.Core.Interfaces
 {
     public interface IChatSender
     {
-        Task<>
+      
     }
 }
