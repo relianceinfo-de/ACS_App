@@ -9,11 +9,16 @@ using System.Threading.Tasks;
 using ACS.Domain.Entities.Chat;
 using Azure.Communication.Identity;
 using Azure;
+using AppData;
+using ACS.Domain.Entities.User;
 
 namespace ACS.Business.Core.Services
 {
     public class ChatService : IChatSender
     {
+        private ApplicationDbContext _context;
+
+        public ChatService(ApplicationDbContext context) { _context = context; }
         private async Task<ChatClient> ChatAuthenticate(string token)
         {
             try
@@ -83,8 +88,8 @@ namespace ACS.Business.Core.Services
                 var chatClient = client;
                 SendChatMessageOptions sendChatMessageOptions = new SendChatMessageOptions()
                 {
-                    Content = content,
-                    MessageType = ChatMessageType.Text
+                Content = content,
+                MessageType = ChatMessageType.Text
                 };
                 sendChatMessageOptions.Metadata["hasAttachment"] = "true";
                 sendChatMessageOptions.Metadata["attachmentUrl"] = "https://contoso.com/files/attachment.docx";
@@ -138,9 +143,10 @@ namespace ACS.Business.Core.Services
             try
             {
                 var chatClient = id;
-                var identity = await CreateIdentity();
+                //var identity = await CreateIdentity();
+                var identity = _context.chatUsers.SingleOrDefault(c => c.Name == userName);
 
-                var uName = new CommunicationUserIdentifier(id: identity.UserIdentity.Id);
+                var uName = new CommunicationUserIdentifier(id: identity.ChatId);
 
                 var participants = new[]
                 {
@@ -200,6 +206,14 @@ namespace ACS.Business.Core.Services
                     UserIdentity = identity,
                     AccessToken = token.Result
                 };
+
+                var user = new ChatUser()
+                {
+                    ChatId = identity.Id,
+                    Token = token.Result
+                };
+                _context.chatUsers.Add(user);
+                _context.SaveChanges();
                 return scopeId;
             }
             catch (Exception ex)

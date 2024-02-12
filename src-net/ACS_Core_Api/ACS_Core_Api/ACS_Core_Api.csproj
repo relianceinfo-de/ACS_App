@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ACS.Business.Core\ACS.Business.Core.csproj" />
+    <ProjectReference Include="..\AppData\AppData.csproj" />
   </ItemGroup>
 
 </Project>
