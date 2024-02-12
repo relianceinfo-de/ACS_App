@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ACS.Domain\ACS.Domain.csproj" />
+    <ProjectReference Include="..\AppData\AppData.csproj" />
   </ItemGroup>
 
 </Project>

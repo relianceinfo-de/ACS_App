@@ -9,27 +9,11 @@ using System.Threading.Tasks;
 using ACS.Domain.Entities.Chat;
 using Azure.Communication.Identity;
 using Azure;
-using Microsoft.AspNetCore.Http;
 
 namespace ACS.Business.Core.Services
 {
     public class ChatService : IChatSender
     {
-        public ChatService()
-        {
-            string connectionString = Environment.GetEnvironmentVariable("COMMUNICATION_SERVICES_CONNECTION_STRING");
-            clientKey = new CommunicationIdentityClient(connectionString);
-
-
-            string endpoint = Environment.GetEnvironmentVariable("COMMUNICATION_SERVICES_ENDPOINT");
-
-            string accessKey = Environment.GetEnvironmentVariable("COMMUNICATION_SERVICES_ACCESSKEY");
-
-            var clientKey1 = new CommunicationIdentityClient(new Uri(endpoint), new AzureKeyCredential(accessKey));
-
-        }
-        public CommunicationIdentityClient clientKey { get; set; }
-        public int Y { get; set; }
         private async Task<ChatClient> ChatAuthenticate(string token)
         {
             try
@@ -120,8 +104,8 @@ namespace ACS.Business.Core.Services
                 var chatClient = await GetChatThread("",threadId);
                 SendChatMessageOptions sendChatMessageOptions = new SendChatMessageOptions()
                 {
-                    Content = content,
-                    MessageType = ChatMessageType.Text
+                Content = content,
+                MessageType = ChatMessageType.Text
                 };
                 sendChatMessageOptions.Metadata["hasAttachment"] = "true";
                 sendChatMessageOptions.Metadata["attachmentUrl"] = "https://contoso.com/files/attachment.docx";
@@ -175,9 +159,10 @@ namespace ACS.Business.Core.Services
             try
             {
                 var chatClient = id;
-                var identity = await CreateIdentity();
+                //var identity = await CreateIdentity();
+                var identity = _context.chatUsers.SingleOrDefault(c => c.Name == userName);
 
-                var uName = new CommunicationUserIdentifier(id: identity.UserIdentity.Id);
+                var uName = new CommunicationUserIdentifier(id: identity.ChatId);
 
                 var participants = new[]
                 {
@@ -237,8 +222,6 @@ namespace ACS.Business.Core.Services
                     UserIdentity = identity,
                     AccessToken = token.Result
                 };
-
-               
                 return scopeId;
             }
             catch (Exception ex)

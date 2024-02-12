@@ -16,7 +16,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ACS.Business.Core\ACS.Business.Core.csproj" />
-    <ProjectReference Include="..\Data\Data.csproj" />
   </ItemGroup>
 
 </Project>
