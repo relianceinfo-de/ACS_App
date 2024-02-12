@@ -9,11 +9,27 @@ using System.Threading.Tasks;
 using ACS.Domain.Entities.Chat;
 using Azure.Communication.Identity;
 using Azure;
+using Microsoft.AspNetCore.Http;
 
 namespace ACS.Business.Core.Services
 {
     public class ChatService : IChatSender
     {
+        public ChatService()
+        {
+            string connectionString = Environment.GetEnvironmentVariable("COMMUNICATION_SERVICES_CONNECTION_STRING");
+            clientKey = new CommunicationIdentityClient(connectionString);
+
+
+            string endpoint = Environment.GetEnvironmentVariable("COMMUNICATION_SERVICES_ENDPOINT");
+
+            string accessKey = Environment.GetEnvironmentVariable("COMMUNICATION_SERVICES_ACCESSKEY");
+
+            var clientKey1 = new CommunicationIdentityClient(new Uri(endpoint), new AzureKeyCredential(accessKey));
+
+        }
+        public CommunicationIdentityClient clientKey { get; set; }
+        public int Y { get; set; }
         private async Task<ChatClient> ChatAuthenticate(string token)
         {
             try
@@ -35,16 +51,17 @@ namespace ACS.Business.Core.Services
                 throw new Exception(ex.Message);
             }
         }
-        public async Task<ChatThreadClient> AppChatStart()
+        public async Task<ChatThreadClient> AppChatStart(string name)
         {
             try
             {
+                
                 var identity = CreateIdentity();
                 var chatClient = ChatAuthenticate(identity.Result.AccessToken);
 
                 var chatParticipant = new ChatParticipant(identifier: new CommunicationUserIdentifier(id: identity.Result.UserIdentity.Id))
                 {
-                    DisplayName = "Admin User"
+                    DisplayName = name
                 };
                 CreateChatThreadResult createChatThreadResult = await chatClient.Result.CreateChatThreadAsync(topic: "ACS Chat Group!", participants: new[] { chatParticipant });
                 ChatThreadClient chatThreadClient = chatClient.Result.GetChatThreadClient(threadId: createChatThreadResult.ChatThread.Id);
@@ -76,11 +93,31 @@ namespace ACS.Business.Core.Services
             }
         }
 
-        public async Task<SendChatMessageResult> SendChat(string id, string content, ChatThreadClient client)
+        public async Task<Pageable<ChatThreadItem>> GetAllChatThreads(string token)
         {
             try
             {
-                var chatClient = client;
+                var chatClient = ChatAuthenticate(token);
+                Pageable<ChatThreadItem> chatThreadItems = chatClient.Result.GetChatThreads();
+                 foreach (ChatThreadItem chatThreadItem in chatThreadItems)
+                {
+                    Console.WriteLine($"{chatThreadItem.Id}");
+                }
+                return chatThreadItems;
+            }
+            catch(Exception ex)
+            {
+
+            }
+            return null;
+        }
+
+        public async Task<SendChatMessageResult> SendChat(string content, string threadId)
+        {
+            try
+            {
+
+                var chatClient = await GetChatThread("",threadId);
                 SendChatMessageOptions sendChatMessageOptions = new SendChatMessageOptions()
                 {
                     Content = content,
@@ -200,6 +237,8 @@ namespace ACS.Business.Core.Services
                     UserIdentity = identity,
                     AccessToken = token.Result
                 };
+
+               
                 return scopeId;
             }
             catch (Exception ex)
@@ -252,6 +291,19 @@ namespace ACS.Business.Core.Services
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task ChatAppFlow()
+        {
+            try
+            {
+                var start = await AppChatStart("");
+
+            }
+            catch(Exception ex)
+            {
+
             }
         }
     }

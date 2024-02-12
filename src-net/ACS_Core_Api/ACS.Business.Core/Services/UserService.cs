@@ -29,10 +29,12 @@ namespace ACS.Business.Core.Services
                 var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature);
                 var subject = new ClaimsIdentity(new[]
                 {
-                    new Claim(JwtRegisteredClaimNames.Sub, username),
+                    new Claim(JwtRegisteredClaimNames.Name, username),
                     new Claim(JwtRegisteredClaimNames.Email, username),
                 });
 
+                var claims = new List<Claim>();
+                claims.Add(new Claim("name", username));
                 var expires = DateTime.UtcNow.AddMinutes(10);
 
                 var tokenDescriptor = new SecurityTokenDescriptor
@@ -42,8 +44,10 @@ namespace ACS.Business.Core.Services
                     Issuer = issuer,
                     Audience = audience,
                     SigningCredentials = signingCredentials,
-                    IssuedAt = DateTime.Now
+                    IssuedAt = DateTime.Now,
                     
+
+
                 };
 
                 var tokenHandler = new JwtSecurityTokenHandler();
@@ -57,5 +61,6 @@ namespace ACS.Business.Core.Services
                 throw new Exception(ex.Message);
             }
         }
+
     }
 }
