@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ACS_ChatApp.MainPage">
+
+    <VerticalStackLayout>
+        <Button Text="Create Chat Thread" Clicked="OnCreateChatThreadClicked" />
+        <Entry x:Name="MessageEntry" Placeholder="Type your message here" />
+        <Button Text="Send Message" Clicked="OnSendMessageClicked" />
+        <ListView x:Name="MessagesListView">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextCell Text="{Binding .}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </VerticalStackLayout>
+</ContentPage>

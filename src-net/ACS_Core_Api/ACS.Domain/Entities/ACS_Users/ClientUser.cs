@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ACS.Domain.Entities.ACS_Users
 {
-    public class User
+    public class ClientUser
     {
         public int Id { get; set; }
         public string UserName { get; set; }

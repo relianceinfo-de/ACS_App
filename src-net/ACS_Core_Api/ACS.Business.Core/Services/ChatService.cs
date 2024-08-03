@@ -52,7 +52,7 @@ namespace ACS.Business.Core.Services
                 string threadId = chatThreadClient.Id;
                 Console.WriteLine($"Thread Topic: {createChatThreadResult.ChatThread.Topic}");
 
-                Console.WriteLine($"User Name: {chatParticipant.DisplayName}");
+                Console.WriteLine($"ClientUser Name: {chatParticipant.DisplayName}");
                 return chatThreadClient;
             }
             catch (Exception ex)
@@ -159,10 +159,12 @@ namespace ACS.Business.Core.Services
             try
             {
                 var chatClient = id;
-                //var identity = await CreateIdentity();
-                var identity = _context.chatUsers.SingleOrDefault(c => c.Name == userName);
+                var identity = await CreateIdentity();
+                //var identity = _context.chatUsers.SingleOrDefault(c => c.Name == userName);
 
-                var uName = new CommunicationUserIdentifier(id: identity.ChatId);
+                //var uName = new CommunicationUserIdentifier(id: identity.UserIdentity);
+
+                var uName = new CommunicationUserIdentifier(id: "");
 
                 var participants = new[]
                 {

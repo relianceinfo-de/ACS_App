@@ -31,7 +31,7 @@ namespace ACS_Core_Api.ModuleEndpoints
                 {
                     var loggedInUser = _context.User.Identity.Name;
                     var name = _context.User.Claims.FirstOrDefault(c => c.Type == "name");
-                    var result = await _chat.SendChat(string content);
+                    //var result = await _chat.SendChat(string content);
 
                 }).RequireAuthorization();
             }

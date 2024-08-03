@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
@@ -11,13 +11,18 @@
     <PackageReference Include="Azure.Communication.Email" Version="1.0.1" />
     <PackageReference Include="Azure.Communication.Identity" Version="1.3.0" />
     <PackageReference Include="Azure.Communication.Sms" Version="1.0.1" />
-    <PackageReference Include="Azure.Identity" Version="1.10.0" />
+    <PackageReference Include="Azure.Identity" Version="1.11.3" />
+   
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ACS.Domain\ACS.Domain.csproj" />
-    <ProjectReference Include="..\AppData\AppData.csproj" />
   </ItemGroup>
+
+  <!--<ItemGroup>
+    <ProjectReference Include="..\ACS.Domain\ACS.Domain.csproj" />
+    <ProjectReference Include="..\AppData\AppData.csproj" />
+  </ItemGroup>-->
 
 </Project>
